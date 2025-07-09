@@ -1,22 +1,25 @@
-const aiInsightService = require('../services/aiInsightService');
+const parseCommand = require('../services/aiInsightService');
+const db = require('../services/dbService');
 
-exports.handleCommand = async (req, res) => {
+async function handleCommand(req, res) {
     const { text } = req.body;
+    const parsed = parseCommand(text);
 
-    if (!text) {
-        return res.status(400).json({ error: 'Text is required' });
+    let result;
+
+    if (parsed.intent === "add_task") {
+        result = await db.addTask(parsed.data);
+    } else if (parsed.intent === "add_note") {
+        result = await db.addNote(parsed.data);
+    } else {
+        result = { message: "Command not recognized." };
     }
 
-    try {
-        // Forward to AI Insight Engine
-        const parsedCommand = await aiInsightService.parseCommand(text);
+    res.json({
+        status: "success",
+        intent: parsed.intent,
+        result: result
+    });
+}
 
-        // Here you would typically store to DB (MongoDB later)
-        console.log("Parsed Command:", parsedCommand);
-
-        return res.json({ message: 'Command received', data: parsedCommand });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
-    }
-};
+module.exports = { handleCommand };
