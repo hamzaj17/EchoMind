@@ -1,6 +1,7 @@
+import requests
 import speech_recognition as sr
 
-def listen_and_print():
+def listen_and_send():
     recognizer = sr.Recognizer()
     mic = sr.Microphone()
 
@@ -13,18 +14,22 @@ def listen_and_print():
     try:
         command = recognizer.recognize_google(audio)
         print(f"You said: {command}")
-        return command
-    except sr.UnknownValueError:
-        print("Sorry, EchoMind could not understand your speech.")
-        return ""
-    except sr.RequestError as e:
-        print(f"Could not request results; {e}")
-        return ""
 
-if __name__ == "__main__":
-    while True:
-        command = listen_and_print()
+        # Send to Node backend
+        response = requests.post("http://localhost:5000/command", json={"text": command})
+        print(f"EchoMind Backend Response: {response.json()}")
+
         if "exit" in command.lower() or "stop" in command.lower():
             print("Exiting EchoMind voice assistant.")
-            break
-        
+            return False
+
+    except sr.UnknownValueError:
+        print("Sorry, EchoMind could not understand your speech.")
+    except sr.RequestException as e:
+        print(f"Request error: {e}")
+
+    return True
+
+if __name__ == "__main__":
+    while listen_and_send():
+        pass
