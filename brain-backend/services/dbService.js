@@ -1,21 +1,21 @@
-const { Pool } = require('pg');
+import prisma from '../prisma.js';
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'echomind',
-    password: 'comsatsapply2023',
-    port: 5432,
-});
-
+// Add a task
 async function addTask(description) {
-    const res = await pool.query('INSERT INTO tasks (description) VALUES ($1) RETURNING *', [description]);
-    return res.rows[0];
+    return await prisma.tasks.create({
+        data: {
+            description: description,
+        },
+    });
 }
 
+// Add a note
 async function addNote(content) {
-    const res = await pool.query('INSERT INTO notes (content) VALUES ($1) RETURNING *', [content]);
-    return res.rows[0];
+    return await prisma.notes.create({
+        data: {
+            content: content,
+        },
+    });
 }
 
-module.exports = { addTask, addNote };
+export { addTask, addNote };
