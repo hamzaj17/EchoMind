@@ -1,3 +1,5 @@
+// brain-backend/controllers/commandController.js
+
 import prisma from '../prisma/prismaClient.js';
 import parseCommand from '../utils/parser.js';
 
@@ -14,41 +16,33 @@ export const handleCommand = async (req, res) => {
 
         const parsedCommand = parseCommand(receivedText);
 
-        // Store in Command table for global history
-        const newCommand = await prisma.command.create({
-            data: {
-                action: parsedCommand.action,
-                type: parsedCommand.type,
-                content: parsedCommand.content
-            }
-        });
+        let savedData;
 
-        // Route to specific table
-        let result = null;
         if (parsedCommand.type === 'task') {
-            result = await prisma.task.create({
-                data: { description: parsedCommand.content }
+            savedData = await prisma.task.create({
+                data: {
+                    description: parsedCommand.content,
+                },
             });
         } else if (parsedCommand.type === 'note') {
-            result = await prisma.note.create({
-                data: { content: parsedCommand.content }
+            savedData = await prisma.note.create({
+                data: {
+                    content: parsedCommand.content,
+                },
             });
         } else if (parsedCommand.type === 'reminder') {
-            result = await prisma.reminder.create({
-                data: { content: parsedCommand.content }
+            savedData = await prisma.reminder.create({
+                data: {
+                    content: parsedCommand.content,
+                },
             });
+        } else {
+            return res.status(400).json({ message: "Could not determine the type of command." });
         }
 
-        res.json({
-            message: `Command processed and stored in '${parsedCommand.type}'`,
-            data: {
-                command: newCommand,
-                routedData: result || "No specific type matched; stored only in Command table."
-            }
-        });
-
+        res.json({ message: "Command received and stored successfully.", data: savedData });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error storing command", error: error.message });
+        res.status(500).json({ message: "Error storing command.", error: error.message });
     }
 };

@@ -20,9 +20,10 @@ model Note {
 }
 
 model Reminder {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  description String
+  content     String
+  createdAt   DateTime @default(now())
 }
 
 
