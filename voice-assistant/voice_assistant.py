@@ -16,7 +16,10 @@ def listen_and_send():
         print(f"You said: {command}")
 
         # Send to Node backend
-        response = requests.post("http://localhost:5000/command", json={"text": command})
+        response = requests.post(
+            "http://localhost:5000/api/command",  
+            json={"message": command}
+        )
         print(f"EchoMind Backend Response: {response.json()}")
 
         if "exit" in command.lower() or "stop" in command.lower():
