@@ -1,40 +1,30 @@
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
 @app.post("/parse")
 async def parse_command(request: Request):
     data = await request.json()
-    text = data.get("text", "").lower().strip()
+    text = data.get("text", "").lower()
 
-    if "task" in text or "list" in text:
-        content = text.replace("add", "").replace("task", "").replace("list", "").strip()
-        return {
-            "intent": "add_task",
-            "entities": {
-                "task_description": content or text
-            }
-        }
-    elif "reminder" in text or "remind" in text:
-        content = text.replace("add", "").replace("reminder", "").replace("remind", "").strip()
-        return {
-            "intent": "add_reminder",
-            "entities": {
-                "reminder_text": content or text
-            }
-        }
-    elif "note" in text:
-        content = text.replace("add", "").replace("note", "").strip()
-        return {
-            "intent": "add_note",
-            "entities": {
-                "note_content": content or text
-            }
-        }
-    else:
-        return {
-            "intent": "unknown",
-            "entities": {
-                "raw": text
-            }
-        }
+    task_keywords = ["task", "to do", "list", "add to list", "add to do"]
+    reminder_keywords = ["remind", "reminder", "remember to", "set reminder"]
+    note_keywords = ["note", "save note", "jot down", "write down", "take note", "notes"]
+
+    intent = "unknown"
+    entities = {}
+
+    if any(keyword in text for keyword in task_keywords):
+        intent = "add_task"
+        entities["task_description"] = text
+
+    elif any(keyword in text for keyword in reminder_keywords):
+        intent = "add_reminder"
+        entities["reminder_text"] = text
+
+    elif any(keyword in text for keyword in note_keywords):
+        intent = "add_note"
+        entities["note_content"] = text
+
+    return JSONResponse(content={"intent": intent, "entities": entities})

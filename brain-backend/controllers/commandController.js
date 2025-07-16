@@ -16,6 +16,8 @@ export const handleCommand = async (req, res) => {
 
         let result;
 
+        console.log("AI Response:", aiResponse.data);
+
         if (intent === "add_task") {
             result = await prisma.task.create({
                 data: {
