@@ -11,7 +11,7 @@ export const handleCommand = async (req, res) => {
         }
 
         // Send to AI Insight Engine
-        const aiResponse = await axios.post('http://127.0.0.1:8000/parse', { text: receivedText });
+        const aiResponse = await axios.post('https://echomind-production-48ea.up.railway.app/', { text: receivedText });
         const { intent, entities } = aiResponse.data;
 
         let result;
