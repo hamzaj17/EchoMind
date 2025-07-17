@@ -15,16 +15,21 @@ async def parse_command(request: Request):
     intent = "unknown"
     entities = {}
 
-    if any(keyword in text for keyword in task_keywords):
-        intent = "add_task"
-        entities["task_description"] = text
-
-    elif any(keyword in text for keyword in reminder_keywords):
+    if any(keyword in text for keyword in reminder_keywords):
         intent = "add_reminder"
         entities["reminder_text"] = text
+
+    elif any(keyword in text for keyword in task_keywords):
+        intent = "add_task"
+        entities["task_description"] = text
 
     elif any(keyword in text for keyword in note_keywords):
         intent = "add_note"
         entities["note_content"] = text
 
     return JSONResponse(content={"intent": intent, "entities": entities})
+
+@app.get("/")
+async def root():
+    return {"message": "EchoMind AI Insight Engine is live!"}
+
