@@ -21,6 +21,7 @@ EchoMind/
 │   ├── requirements.txt
 │   └── ...
 │
+
 ├── brain-backend/          # Node.js + Express + Prisma + Neon DB Backend
 │   ├── prisma/
 │   ├── controllers/
@@ -29,6 +30,7 @@ EchoMind/
 │   ├── package.json
 │   └── ...
 │
+
 ├── voice-assistant       # Speech Input
 │   └── voice_assistant.py 
 │
