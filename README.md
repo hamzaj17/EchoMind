@@ -14,27 +14,19 @@ This guide ensures **anyone can clone, run, and test EchoMind on any machine rel
 
 ## 📂 Project Structure
 
-EchoMind/
-│
-├── ai-insight-engine/      # FastAPI AI Insight Engine (deployed on Railway)
-│   ├── main.py
-│   ├── requirements.txt
-│   └── ...
-│
-
-├── brain-backend/          # Node.js + Express + Prisma + Neon DB Backend
-│   ├── prisma/
-│   ├── controllers/
-│   ├── routes/
-│   ├── server.js
-│   ├── package.json
-│   └── ...
-│
-
-├── voice-assistant       # Speech Input
-│   └── voice_assistant.py 
-│
-└── README.md               # This file
+<pre> 📂 EchoMind/ │ ├── 📁 ai-insight-engine/ # FastAPI AI Insight Engine (deployed on Railway) │ 
+  ├── main.py │ 
+  ├── requirements.txt 
+  │ └── ... 
+├── 📁 brain-backend/ # Node.js + Express + Prisma + Neon DB Backend │ 
+  ├── prisma/ │ 
+  ├── controllers/ │ 
+  ├── routes/ │ 
+  ├── server.js │ 
+  ├── package.json │ └── ... │ 
+├── 📁 voice-assistant/ # Speech Input │
+  └── voice_assistant.py │
+└── README.md # Project documentation for GitHub </pre>
 
 ---
 
