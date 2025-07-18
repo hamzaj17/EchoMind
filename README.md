@@ -6,7 +6,9 @@ EchoMind is a **voice-driven, AI-enhanced productivity assistant** that:
 
 ✅ Extracts structured intents/entities.
 
-✅ Stores tasks, reminders, and notes in a **Neon PostgreSQL database** using a **Node.js backend**.
+✅ Stores tasks, reminders, and notes in a **Neon PostgreSQL database** using a **Node.js backend** deployed on **Railway**.
+
+✅ Fully cloud-based and globally accessible, no local server dependency.
 
 This guide ensures **anyone can clone, run, and test EchoMind on any machine reliably**.
 
@@ -108,51 +110,21 @@ https://echomind-production-48ea.up.railway.app/parse
 
 ---
 
-## 4️⃣ Set Up and Run Node.js Backend
+## 4️⃣ Deploy Node.js Backend on Railway
 
-1. Navigate to the backend folder:
+✅ Your **Node.js backend** is deployed on Railway at:
 
-   ```bash
-   cd brain-backend
-   ```
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file:
-
-   ```ini
-   DATABASE_URL="your_neon_database_url"
-   INSIGHT_ENGINE_URL="https://echomind-production-48ea.up.railway.app/parse"
-   PORT=5000
-   ```
-4. Initialize Prisma:
-
-   ```bash
-   npx prisma generate
-   npx prisma migrate deploy
-   ```
-5. Run the server:
-
-   ```bash
-   npm start
-   ```
-
-   The server should run on:
-
-   ```
-   http://localhost:5000
-   ```
-
----
+<pre>
+https://honest-analysis-production.up.railway.app
+</pre>
+No local server run is needed, backend is globally accessible.
 
 ## 5️⃣ Testing the Pipeline
 
 Use **Postman** or **curl** to test end-to-end:
 
 ```bash
-curl -X POST http://localhost:5000/api/command \
+curl -X POST https://honest-analysis-production.up.railway.app/api/command \
 -H "Content-Type: application/json" \
 -d '{"text": "remind to call Ali tomorrow"}'
 ```
@@ -161,16 +133,24 @@ curl -X POST http://localhost:5000/api/command \
 
 ---
 
-## 6️⃣ (Optional) Run CLI Speech Interface
+## 6️⃣ Run CLI Voice Assistant
 
-If you have implemented the CLI speech interface:
+Your voice_assistant.py will use your deployed backend:
+<pre>
+store_response = requests.post(
+   "https://honest-analysis-production.up.railway.app/api/command",
+   json={"text": command}
+)
+</pre>
+This ensures your CLI now uses your **globally deployed Node.js backend on Railway** instead of localhost.
 
-```bash
-cd cli
-python cli_interface.py
-```
+Then run your voice assistant:
+<pre>
+cd voice-assistant
+python voice_assistant.py
+</pre>
 
-✅ Speak commands, and EchoMind will parse and store them automatically.
+✅ Speak commands, and EchoMind will parse and store them automatically in your Neon DB via your deployed backend.
 
 ---
 
@@ -188,16 +168,6 @@ python cli_interface.py
 
 ---
 
-## 🚀 Optional Cloud Deployment
-
-To deploy the Node.js backend on Railway:
-
-* Deploy the `brain-backend` folder.
-* Add your Neon DB and Insight Engine URL as environment variables.
-* Access your entire pipeline from any machine or frontend client seamlessly.
-
----
-
 ## ✨ Features Recap
 
 ✅ Voice/text command recognition.
@@ -207,6 +177,8 @@ To deploy the Node.js backend on Railway:
 ✅ Structured storage of tasks, reminders, and notes.
 
 ✅ Clean microservices architecture (FastAPI + Node.js + Neon).
+
+✅ Fully deployed on Railway for global access
 
 ✅ Extendable for frontend apps, Discord bots, or mobile clients.
 
