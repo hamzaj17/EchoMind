@@ -21,7 +21,7 @@ def listen_and_send():
             return False
 
         # Send to FastAPI backend for intent parsing
-        response = requests.post("http://127.0.0.1:8000/parse", json={"text": command})
+        response = requests.post("https://echomind-production-48ea.up.railway.app/parse", json={"text": command})
         backend_response = response.json()
 
         if backend_response.get("intent") == "unknown":
@@ -29,7 +29,7 @@ def listen_and_send():
         else:
             # Forward the same command to your Node backend for storage
             store_response = requests.post(
-                "http://localhost:5000/api/command",
+                "https://honest-analysis-production.up.railway.app/api/command",
                 json={"text": command}
             )
             if store_response.status_code == 200:
