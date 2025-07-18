@@ -4,6 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "postinstall": "prisma generate",
     "start": "node server.js"
   },
   "dependencies": {
