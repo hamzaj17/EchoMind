@@ -18,3 +18,15 @@ export const createNote = async (req, res) => {
         res.status(500).json({ message: "Error creating note.", error: error.message });
     }
 };
+
+export const getNotes = async (req, res) => {
+    try {
+        const notes = await prisma.note.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(notes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching notes.", error: error.message });
+    }
+};

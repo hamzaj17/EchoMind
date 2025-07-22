@@ -18,3 +18,15 @@ export const createTask = async (req, res) => {
         res.status(500).json({ message: "Error creating task.", error: error.message });
     }
 };
+
+export const getTasks = async (req, res) => {
+    try {
+        const tasks = await prisma.task.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(tasks);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching tasks.", error: error.message });
+    }
+};

@@ -18,3 +18,15 @@ export const createReminder = async (req, res) => {
         res.status(500).json({ message: "Error creating reminder.", error: error.message });
     }
 };
+
+export const getReminders = async (req, res) => {
+    try {
+        const reminders = await prisma.reminder.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(reminders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching reminders.", error: error.message });
+    }
+};
