@@ -30,3 +30,14 @@ export const getReminders = async (req, res) => {
         res.status(500).json({ message: "Error fetching reminders.", error: error.message });
     }
 };
+
+export const deleteReminder = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await prisma.reminder.delete({ where: { id: parseInt(id) } });
+        res.json({ message: "Reminder deleted successfully." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error deleting reminder.", error: error.message });
+    }
+};

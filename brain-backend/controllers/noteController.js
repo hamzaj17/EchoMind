@@ -30,3 +30,14 @@ export const getNotes = async (req, res) => {
         res.status(500).json({ message: "Error fetching notes.", error: error.message });
     }
 };
+
+export const deleteNote = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await prisma.note.delete({ where: { id: parseInt(id) } });
+        res.json({ message: "Note deleted successfully." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error deleting note.", error: error.message });
+    }
+};
