@@ -1,8 +1,0 @@
-__pycache__/
-*.pyc
-node_modules/
-.env
-.DS_Store
-voice-assistant/venv/
-ai-insight-engine/venv/
-venv/
