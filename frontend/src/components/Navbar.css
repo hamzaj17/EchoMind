@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.navbar {
+    font-family: 'Poppins', sans-serif;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 0.8rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  margin: 1rem;
+}
+
+.logo {
+    font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #5a5de4;
+}
+
+.mic-icon {
+  font-size: 1.8rem;
+  margin-right: 0.5rem;
+  color: #5a5de4;
+}
+
+.logo-text span {
+  color: #8b5cf6; /* gradient effect simulated with two colors */
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links li {
+  display: inline-block;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: #333;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-links a.active {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+.nav-links a:hover {
+  background-color: #f1f5ff;
+  color: #4f46e5;
+}
+
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #4b5563; /* Tailwind-style gray-700 */
+  margin-top: 0.1rem;
+  font-weight: 400;
+}

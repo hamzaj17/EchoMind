@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.voice-container {
+  text-align: center;
+  margin-top: 120px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.mic-button {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border: none;
+  border-radius: 50%;
+  width: 130px;
+  height: 130px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.mic-button:hover {
+  transform: scale(1.05);
+}
+
+.mic-button.listening {
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 0 10px rgba(139, 92, 246, 0.3),
+              0 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.heading {
+  margin-top: 20px;
+  font-size: 24px;
+  color: #1e293b;
+}
+
+.description {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #64748b;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.voice-response {
+  margin-top: 20px;
+  font-size: 16.5px;
+  font-weight: 500;
+}
+
+.voice-response.stop {
+  color: #dc2626; /* red */
+}
+
+.voice-response.success {
+  color: #6d28d9; /* dark purple */
+}
+
+.voice-response.info {
+  color: #0ea5e9; /* cyan-blue */
+}
+
+.voice-response.error {
+  color: #b91c1c;
+}
