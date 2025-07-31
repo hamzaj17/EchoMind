@@ -1,6 +1,8 @@
-# 🚀 EchoMind: AI Insight Engine + Smart Task, Reminder, Note Manager
+# 🚀 EchoMind: CLI Voice-Assistant, AI Insight Engine + Smart Task, Reminder, Note Manager
 
 EchoMind is a **voice-driven, AI-enhanced productivity assistant** that:
+
+✅ Voice/text command recognition (voice command recognition using pyttsx3).
 
 ✅ Parses spoken/text commands using an **AI Insight Engine (FastAPI)**.
 
@@ -151,6 +153,42 @@ python voice_assistant.py
 </pre>
 
 ✅ Speak commands, and EchoMind will parse and store them automatically in your Neon DB via your deployed backend.
+
+
+🗣️ Note: The CLI Voice Assistant now uses pyttsx3 for offline spoken confirmations when you add tasks, reminders, or notes.
+
+✅ Works fully offline (no internet needed for speech feedback).  
+✅ Provides spoken confirmations (e.g., “Task added successfully.”).  
+✅ Lightweight and adjustable rate, pitch, and volume.  
+✅ Helps visually confirm command success without checking the screen.
+
+#### How to Enable:
+
+<pre>
+  Install `pyttsx3` in your environment:
+pip install pyttsx3
+</pre>
+If on Windows:
+```bash
+pip install pypiwin32
+```
+
+Example usage in *voice_assistant.py*:
+```bash
+import pyttsx3
+
+engine = pyttsx3.init()
+engine.say("EchoMind is now listening. Please speak your command.")
+engine.runAndWait()
+```
+
+You can adjust:
+```bash
+engine.setProperty('rate', 150)
+engine.setProperty('volume', 0.8)
+```
+
+✨ With pyttsx3, EchoMind now speaks back confirmations offline, enhancing your productivity flow during CLI use.
 
 ---
 
