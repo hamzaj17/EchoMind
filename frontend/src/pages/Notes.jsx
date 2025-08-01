@@ -42,6 +42,9 @@ function Notes() {
   };
 
   const deleteNote = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this note?");
+    if (!confirmDelete) return;
+
     try {
       await axios.delete(`https://honest-analysis-production.up.railway.app/api/notes/${id}`);
       setNotes(notes.filter(note => note.id !== id));

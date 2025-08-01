@@ -9,7 +9,6 @@ function Reminders() {
     const [reminderTime, setReminderTime] = useState('');
     const [reminders, setReminders] = useState([]);
 
-    // Fetch reminders from backend
     const fetchReminders = async () => {
         try {
             const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders');
@@ -50,8 +49,10 @@ function Reminders() {
         }
     };
 
-    // ✅ FIXED deleteReminder function: now passes correct ID in URL
     const deleteReminder = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this reminder?");
+        if (!confirmDelete) return;
+
         try {
             const response = await fetch(`https://honest-analysis-production.up.railway.app/api/reminders/${id}`, {
                 method: 'DELETE'
