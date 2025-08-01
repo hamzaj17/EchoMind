@@ -57,14 +57,32 @@ function Tasks() {
     }
   };
 
-   const toggleTaskCompletion = async (taskId, currentState) => {
-     try {
-       await axios.put(`${API_URL}/${taskId}`, { completed: !currentState });
-       setTasks(tasks.map(task => task.id === taskId ? { ...task, completed: !currentState } : task));
-     } catch (err) {
-       console.error("Failed to toggle task completion:", err);
-     }
-   };
+  
+const toggleTaskCompletion = async (taskId, currentState) => {
+  // Immediately update UI (optimistic update)
+  setTasks(prevTasks =>
+    prevTasks.map(task =>
+      task.id === taskId ? { ...task, completed: !currentState } : task
+    )
+  );
+
+  try {
+    // Then make API call
+    await axios.put(`${API_URL}/${taskId}`, { completed: !currentState });
+  } catch (err) {
+    console.error("Failed to toggle task completion:", err);
+
+    // Revert UI if API fails
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId ? { ...task, completed: currentState } : task
+      )
+    );
+
+    alert("Failed to update task. Please try again.");
+  }
+};
+
    
 
   const formatDate = (dateString) => {
@@ -143,7 +161,7 @@ function Tasks() {
                   <div className={`task-text ${task.completed ? "strikethrough" : ""}`}>
                     {task.description}
                     </div>
-                    
+
                   <div className="task-date">{formatDate(task.createdAt)}</div>
                 </div>
               </div>
