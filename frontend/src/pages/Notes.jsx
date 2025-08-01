@@ -8,6 +8,7 @@ function Notes() {
   const [noteContent, setNoteContent] = useState('');
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [noteToDelete, setNoteToDelete] = useState(null);
 
   const fetchNotes = async () => {
     try {
@@ -41,15 +42,16 @@ function Notes() {
     }
   };
 
-  const deleteNote = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this note?");
-    if (!confirmDelete) return;
+  const confirmDeleteNote = async () => {
+    if (!noteToDelete) return;
 
     try {
-      await axios.delete(`https://honest-analysis-production.up.railway.app/api/notes/${id}`);
-      setNotes(notes.filter(note => note.id !== id));
+      await axios.delete(`https://honest-analysis-production.up.railway.app/api/notes/${noteToDelete}`);
+      setNotes(notes.filter(note => note.id !== noteToDelete));
     } catch (error) {
       console.error('Failed to delete note:', error);
+    } finally {
+      setNoteToDelete(null);
     }
   };
 
@@ -124,7 +126,7 @@ function Notes() {
               </div>
               <button 
                 className="delete-btn"
-                onClick={() => deleteNote(note.id)}
+                onClick={() => setNoteToDelete(note.id)}
                 title="Delete note"
               >
                 <FaTrash />
@@ -137,6 +139,20 @@ function Notes() {
           </div>
         )}
       </div>
+
+      {/* Themed confirmation modal */}
+      {noteToDelete !== null && (
+        <div className="confirm-overlay">
+          <div className="confirm-box">
+            <h2>Delete Note?</h2>
+            <p>This action cannot be undone. Are you sure?</p>
+            <div className="confirm-buttons">
+              <button onClick={confirmDeleteNote} className="confirm-yes">Yes, Delete</button>
+              <button onClick={() => setNoteToDelete(null)} className="confirm-no">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
