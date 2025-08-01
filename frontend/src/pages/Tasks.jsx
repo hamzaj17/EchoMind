@@ -57,6 +57,16 @@ function Tasks() {
     }
   };
 
+   const toggleTaskCompletion = async (taskId, currentState) => {
+     try {
+       await axios.put(`${API_URL}/${taskId}`, { completed: !currentState });
+       setTasks(tasks.map(task => task.id === taskId ? { ...task, completed: !currentState } : task));
+     } catch (err) {
+       console.error("Failed to toggle task completion:", err);
+     }
+   };
+   
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -120,13 +130,20 @@ function Tasks() {
           </div>
         ) : (
           tasks.map(task => (
-            <div key={task.id} className={`task-item`}>
+            <div key={task.id} className={`task-item ${task.completed ? "completed" : ""}`}>
               <div className="task-content">
-                <div className="task-checkbox">
-                  <FaCheck />
-                </div>
+                <div
+                  className={`task-checkbox ${task.completed ? "checked" : ""}`}
+                  onClick={() => toggleTaskCompletion(task.id, task.completed)}
+                >
+                   {task.completed && <FaCheck />}
+                </div>   
+                
                 <div className="task-details">
-                  <div className="task-text">{task.description}</div>
+                  <div className={`task-text ${task.completed ? "strikethrough" : ""}`}>
+                    {task.description}
+                    </div>
+                    
                   <div className="task-date">{formatDate(task.createdAt)}</div>
                 </div>
               </div>
