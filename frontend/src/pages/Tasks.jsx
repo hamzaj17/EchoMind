@@ -49,6 +49,9 @@ function Tasks() {
   };
 
   const deleteTask = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+    if (!confirmDelete) return;
+
     try {
       await axios.delete(`${API_URL}/${id}`);
       setTasks(tasks.filter(task => task.id !== id));
@@ -57,33 +60,30 @@ function Tasks() {
     }
   };
 
-  
-const toggleTaskCompletion = async (taskId, currentState) => {
-  // Immediately update UI (optimistic update)
-  setTasks(prevTasks =>
-    prevTasks.map(task =>
-      task.id === taskId ? { ...task, completed: !currentState } : task
-    )
-  );
-
-  try {
-    // Then make API call
-    await axios.put(`${API_URL}/${taskId}`, { completed: !currentState });
-  } catch (err) {
-    console.error("Failed to toggle task completion:", err);
-
-    // Revert UI if API fails
+  const toggleTaskCompletion = async (taskId, currentState) => {
+    // Immediately update UI (optimistic update)
     setTasks(prevTasks =>
       prevTasks.map(task =>
-        task.id === taskId ? { ...task, completed: currentState } : task
+        task.id === taskId ? { ...task, completed: !currentState } : task
       )
     );
 
-    alert("Failed to update task. Please try again.");
-  }
-};
+    try {
+      // Then make API call
+      await axios.put(`${API_URL}/${taskId}`, { completed: !currentState });
+    } catch (err) {
+      console.error("Failed to toggle task completion:", err);
 
-   
+      // Revert UI if API fails
+      setTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.id === taskId ? { ...task, completed: currentState } : task
+        )
+      );
+
+      alert("Failed to update task. Please try again.");
+    }
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -154,13 +154,13 @@ const toggleTaskCompletion = async (taskId, currentState) => {
                   className={`task-checkbox ${task.completed ? "checked" : ""}`}
                   onClick={() => toggleTaskCompletion(task.id, task.completed)}
                 >
-                   {task.completed && <FaCheck />}
+                  {task.completed && <FaCheck />}
                 </div>   
                 
                 <div className="task-details">
                   <div className={`task-text ${task.completed ? "strikethrough" : ""}`}>
                     {task.description}
-                    </div>
+                  </div>
 
                   <div className="task-date">{formatDate(task.createdAt)}</div>
                 </div>
