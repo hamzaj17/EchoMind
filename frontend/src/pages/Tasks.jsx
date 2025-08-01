@@ -10,8 +10,9 @@ function Tasks() {
   const [taskText, setTaskText] = useState('');
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
-  // Fetch tasks on mount
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -48,20 +49,24 @@ function Tasks() {
     }
   };
 
-  const deleteTask = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
-    if (!confirmDelete) return;
+  const confirmDelete = (id) => {
+    setTaskToDelete(id);
+    setShowConfirm(true);
+  };
 
+  const deleteTask = async () => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
-      setTasks(tasks.filter(task => task.id !== id));
+      await axios.delete(`${API_URL}/${taskToDelete}`);
+      setTasks(tasks.filter(task => task.id !== taskToDelete));
     } catch (err) {
       console.error("Failed to delete task:", err);
+    } finally {
+      setShowConfirm(false);
+      setTaskToDelete(null);
     }
   };
 
   const toggleTaskCompletion = async (taskId, currentState) => {
-    // Immediately update UI (optimistic update)
     setTasks(prevTasks =>
       prevTasks.map(task =>
         task.id === taskId ? { ...task, completed: !currentState } : task
@@ -69,18 +74,14 @@ function Tasks() {
     );
 
     try {
-      // Then make API call
       await axios.put(`${API_URL}/${taskId}`, { completed: !currentState });
     } catch (err) {
       console.error("Failed to toggle task completion:", err);
-
-      // Revert UI if API fails
       setTasks(prevTasks =>
         prevTasks.map(task =>
           task.id === taskId ? { ...task, completed: currentState } : task
         )
       );
-
       alert("Failed to update task. Please try again.");
     }
   };
@@ -161,13 +162,12 @@ function Tasks() {
                   <div className={`task-text ${task.completed ? "strikethrough" : ""}`}>
                     {task.description}
                   </div>
-
                   <div className="task-date">{formatDate(task.createdAt)}</div>
                 </div>
               </div>
               <button 
                 className="delete-btn"
-                onClick={() => deleteTask(task.id)}
+                onClick={() => confirmDelete(task.id)}
                 title="Delete task"
               >
                 <FaTrash />
@@ -176,6 +176,19 @@ function Tasks() {
           ))
         )}
       </div>
+
+      {showConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Delete Task?</h3>
+            <p>This action cannot be undone.</p>
+            <div className="modal-buttons">
+              <button onClick={deleteTask} className="confirm-delete">Yes, Delete</button>
+              <button onClick={() => setShowConfirm(false)} className="cancel-delete">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
