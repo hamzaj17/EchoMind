@@ -11,6 +11,7 @@ model Task {
   id          Int      @id @default(autoincrement())
   description String
   createdAt   DateTime @default(now())
+  completed   Boolean  @default(false)
 }
 
 model Note {
