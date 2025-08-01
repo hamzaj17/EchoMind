@@ -142,13 +142,13 @@ function Notes() {
 
       {/* Themed confirmation modal */}
       {noteToDelete !== null && (
-        <div className="confirm-overlay">
-          <div className="confirm-box">
+        <div className="modal-overlay">
+          <div className="modal">
             <h2>Delete Note?</h2>
             <p>This action cannot be undone. Are you sure?</p>
-            <div className="confirm-buttons">
-              <button onClick={confirmDeleteNote} className="confirm-yes">Yes, Delete</button>
-              <button onClick={() => setNoteToDelete(null)} className="confirm-no">Cancel</button>
+            <div className="modal-buttons">
+              <button onClick={confirmDeleteNote} className="confirm-btn">Yes, Delete</button>
+              <button onClick={() => setNoteToDelete(null)} className="cancel-btn">Cancel</button>
             </div>
           </div>
         </div>
