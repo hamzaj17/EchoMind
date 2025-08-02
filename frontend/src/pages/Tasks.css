@@ -368,3 +368,50 @@
     transform: scale(1);
   }
 }
+
+/* Skeleton Loader Styles */
+.skeleton {
+  background: linear-gradient(90deg, #5c67f2 25%, #7f63ff 50%, #5c67f2 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  border-radius: 12px;
+  margin: 10px 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  opacity: 0.9;
+}
+
+.placeholder {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+.placeholder-text {
+  width: 60%;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.placeholder-date {
+  width: 30%;
+  height: 10px;
+}
+
+.task-item.skeleton .task-checkbox,
+.task-item.skeleton .delete-btn {
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}

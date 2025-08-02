@@ -5,6 +5,20 @@ import axios from 'axios';
 
 const API_URL = 'https://honest-analysis-production.up.railway.app/api/tasks';
 
+// Skeleton loader component
+const TaskSkeleton = () => (
+  <div className="task-item skeleton">
+    <div className="task-content">
+      <div className="task-checkbox placeholder" />
+      <div className="task-details">
+        <div className="task-text placeholder placeholder-text" />
+        <div className="task-date placeholder placeholder-date" />
+      </div>
+    </div>
+    <div className="delete-btn placeholder" />
+  </div>
+);
+
 function Tasks() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [taskText, setTaskText] = useState('');
@@ -142,7 +156,11 @@ function Tasks() {
 
       <div className="tasks-list">
         {loading ? (
-          <p>Loading tasks...</p>
+          <>
+            <TaskSkeleton />
+            <TaskSkeleton />
+            <TaskSkeleton />
+          </>
         ) : tasks.length === 0 ? (
           <div className="empty-state">
             <p>No tasks yet. Click "Add task" to create your first task!</p>
