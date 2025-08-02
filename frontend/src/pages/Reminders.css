@@ -9,6 +9,11 @@
   color: #333;
 }
 
+.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
 .reminders-header {
   display: flex;
   justify-content: space-between;
