@@ -43,3 +43,46 @@
   color: gray;
   font-size: 0.9rem;
 }
+
+/* Skeleton styles */
+.skeleton {
+  background-color: #f0f2f5;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.skeleton-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+}
+
+.skeleton-texts {
+  flex-grow: 1;
+}
+
+.skeleton-line {
+  height: 12px;
+  background-color: #ddd;
+  border-radius: 6px;
+  margin: 6px 0;
+}
+
+.skeleton-line.short {
+  width: 60px;
+}
+
+.skeleton-line.medium {
+  width: 100px;
+}
+
+.skeleton-line.long {
+  width: 150px;
+}
+
