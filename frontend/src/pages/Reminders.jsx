@@ -8,15 +8,19 @@ function Reminders() {
   const [reminderDate, setReminderDate] = useState('');
   const [reminderTime, setReminderTime] = useState('');
   const [reminders, setReminders] = useState([]);
-  const [deleteId, setDeleteId] = useState(null); // track reminder to delete
+  const [deleteId, setDeleteId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // 👈 loading state
 
   const fetchReminders = async () => {
     try {
+      setIsLoading(true); // 👈 start loading
       const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders');
       const data = await response.json();
       setReminders(data);
     } catch (error) {
       console.error('Failed to fetch reminders:', error);
+    } finally {
+      setIsLoading(false); // 👈 stop loading
     }
   };
 
@@ -160,30 +164,41 @@ function Reminders() {
       )}
 
       <div className="reminders-list">
-        {formattedReminders.map(reminder => (
-          <div
-            key={reminder.id}
-            className={`reminder-item ${reminder.isPast ? 'past' : ''}`}
-          >
-            <div className="reminder-content">
-              <div className="reminder-details">
-                <div className="reminder-title-text">{reminder.title}</div>
-                <div className="reminder-datetime">{`${reminder.time}`}</div>
+        {isLoading ? (
+          // 👉 Skeleton loader: show 3 placeholders
+          <>
+            <div className="reminder-skeleton" />
+            <div className="reminder-skeleton" />
+            <div className="reminder-skeleton" />
+          </>
+        ) : (
+          <>
+            {formattedReminders.map(reminder => (
+              <div
+                key={reminder.id}
+                className={`reminder-item ${reminder.isPast ? 'past' : ''}`}
+              >
+                <div className="reminder-content">
+                  <div className="reminder-details">
+                    <div className="reminder-title-text">{reminder.title}</div>
+                    <div className="reminder-datetime">{`${reminder.time}`}</div>
+                  </div>
+                </div>
+                <button
+                  className="delete-btn"
+                  onClick={() => confirmDeleteReminder(reminder.id)}
+                  title="Delete reminder"
+                >
+                  <FaTrash />
+                </button>
               </div>
-            </div>
-            <button
-              className="delete-btn"
-              onClick={() => confirmDeleteReminder(reminder.id)}
-              title="Delete reminder"
-            >
-              <FaTrash />
-            </button>
-          </div>
-        ))}
-        {formattedReminders.length === 0 && (
-          <div className="empty-state">
-            <p>No reminders yet. Click "Add reminder" to create your first reminder!</p>
-          </div>
+            ))}
+            {formattedReminders.length === 0 && (
+              <div className="empty-state">
+                <p>No reminders yet. Click "Add reminder" to create your first reminder!</p>
+              </div>
+            )}
+          </>
         )}
       </div>
 
