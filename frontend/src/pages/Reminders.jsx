@@ -8,19 +8,19 @@ function Reminders() {
   const [reminderDate, setReminderDate] = useState('');
   const [reminderTime, setReminderTime] = useState('');
   const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // 👈 loading state
 
   const fetchReminders = async () => {
     try {
-      setIsLoading(true); // 👈 start loading
+      setLoading(true);
       const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders');
       const data = await response.json();
       setReminders(data);
     } catch (error) {
       console.error('Failed to fetch reminders:', error);
     } finally {
-      setIsLoading(false); // 👈 stop loading
+      setLoading(false);
     }
   };
 
@@ -54,9 +54,7 @@ function Reminders() {
     }
   };
 
-  const confirmDeleteReminder = (id) => {
-    setDeleteId(id);
-  };
+  const confirmDeleteReminder = (id) => setDeleteId(id);
 
   const handleDeleteConfirmed = async () => {
     if (!deleteId) return;
@@ -76,14 +74,11 @@ function Reminders() {
     }
   };
 
-  const cancelDelete = () => {
-    setDeleteId(null);
-  };
+  const cancelDelete = () => setDeleteId(null);
 
   const parseDateTimeFromContent = (content) => {
     const parts = content.split(' at ');
     if (parts.length < 2) return { title: content, date: '', time: '' };
-
     const [title, datetime] = parts;
     const [date, time] = datetime.split(' ');
     return { title, date, time };
@@ -164,12 +159,18 @@ function Reminders() {
       )}
 
       <div className="reminders-list">
-        {isLoading ? (
-          // 👉 Skeleton loader: show 3 placeholders
+        {loading ? (
           <>
-            <div className="reminder-skeleton" />
-            <div className="reminder-skeleton" />
-            <div className="reminder-skeleton" />
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="reminder-item skeleton">
+                <div className="reminder-content">
+                  <div className="reminder-details">
+                    <div className="skeleton-title"></div>
+                    <div className="skeleton-time"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </>
         ) : (
           <>
