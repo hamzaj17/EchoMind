@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Dashboard.css";
@@ -34,18 +33,33 @@ const DashboardSummary = () => {
         ]);
 
         const activeTasks = tasksRes.data.filter((task) => !task.completed).length;
-        const upcomingReminders = remindersRes.data.length;
+
+        // Only count upcoming reminders
+        const now = new Date();
+        const activeReminders = remindersRes.data.filter((reminder) => {
+          const parts = reminder.content.split(' at ');
+          if (parts.length < 2) return false;
+
+          const datetime = parts[1];
+          const [date, time] = datetime.split(' ');
+          if (!date || !time) return false;
+
+          const reminderDate = new Date(`${date}T${time}`);
+          return reminderDate > now;
+        }).length;
+
         const savedNotes = notesRes.data.length;
 
         setCounts({
           tasks: activeTasks,
-          reminders: upcomingReminders,
+          reminders: activeReminders,
           notes: savedNotes,
         });
-        setLoading(false); // Data fetched
+
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch dashboard counts:", error);
-        setLoading(false); // Still stop loading to avoid infinite spinner
+        setLoading(false);
       }
     };
 
@@ -76,7 +90,7 @@ const DashboardSummary = () => {
             <div>
               <h3>Reminders</h3>
               <p>{counts.reminders}</p>
-              <span>Total reminders</span>
+              <span>Active reminders</span>
             </div>
           </div>
 
