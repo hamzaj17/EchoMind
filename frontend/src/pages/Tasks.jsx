@@ -5,17 +5,17 @@ import axios from 'axios';
 
 const API_URL = 'https://honest-analysis-production.up.railway.app/api/tasks';
 
-// Skeleton loader component
+// Skeleton loader component (same color theme as dashboard)
 const TaskSkeleton = () => (
-  <div className="task-item skeleton">
+  <div className="task-item skeleton-loader">
     <div className="task-content">
-      <div className="task-checkbox placeholder" />
+      <div className="task-checkbox skeleton-box" />
       <div className="task-details">
-        <div className="task-text placeholder placeholder-text" />
-        <div className="task-date placeholder placeholder-date" />
+        <div className="task-text skeleton-box skeleton-text" />
+        <div className="task-date skeleton-box skeleton-date" />
       </div>
     </div>
-    <div className="delete-btn placeholder" />
+    <div className="delete-btn skeleton-box" />
   </div>
 );
 
