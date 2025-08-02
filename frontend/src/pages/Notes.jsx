@@ -109,7 +109,15 @@ function Notes() {
 
       <div className="notes-list">
         {loading ? (
-          <p>Loading notes...</p>
+          <>
+            {[...Array(3)].map((_, index) => (
+              <div className="skeleton-note" key={index}>
+                <div className="skeleton-title"></div>
+                <div className="skeleton-date"></div>
+                <div className="skeleton-content"></div>
+              </div>
+            ))}
+          </>
         ) : notes.length > 0 ? (
           notes.map(note => (
             <div key={note.id} className="note-item">

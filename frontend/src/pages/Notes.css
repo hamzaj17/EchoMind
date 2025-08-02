@@ -336,3 +336,48 @@
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+
+/* SKELETON LOADER STYLES */
+
+.skeleton-note {
+  background-color: #f0f2f5;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-title,
+.skeleton-date,
+.skeleton-content {
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.skeleton-title {
+  width: 30%;
+  height: 16px;
+}
+
+.skeleton-date {
+  width: 20%;
+  height: 12px;
+}
+
+.skeleton-content {
+  width: 100%;
+  height: 50px;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #f0f2f5;
+  }
+  50% {
+    background-color: #ddd;
+  }
+  100% {
+    background-color: #f0f2f5;
+  }
+}
