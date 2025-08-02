@@ -181,8 +181,10 @@ function Reminders() {
               >
                 <div className="reminder-content">
                   <div className="reminder-details">
-                    <div className="reminder-title-text">{reminder.title}</div>
-                    <div className="reminder-datetime">{`${reminder.time}`}</div>
+                    <div className={`reminder-title-text ${reminder.isPast ? 'strikethrough' : ''}`}>
+                      {reminder.title}
+                    </div>
+                    <div className="reminder-datetime">{`${reminder.date} ${reminder.time}`}</div>
                   </div>
                 </div>
                 <button
