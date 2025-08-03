@@ -106,15 +106,15 @@ function Reminders() {
   };
 
 const formattedReminders = reminders.map((reminder) => {
-  let title = reminder.content;
-  let date = '';
-  let time = '';
+  // let title = reminder.content;
+  // let date = '';
+  // let time = '';
 
-  if (reminder.datetime) {
+  // if (reminder.datetime) {
     const dt = new Date(reminder.datetime);
-    date = dt.toISOString().split('T')[0]; // "YYYY-MM-DD"
-    time = dt.toTimeString().slice(0, 5);   // "HH:MM"
-  }
+    const date = dt.toISOString().slice(0,10); // "YYYY-MM-DD"
+    const time = dt.toTimeString().slice(0, 5);   // "HH:MM"
+  // }
 
   return {
     id: reminder.id,
