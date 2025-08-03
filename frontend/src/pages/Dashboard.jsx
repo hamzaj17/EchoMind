@@ -34,17 +34,18 @@ const DashboardSummary = () => {
 
         const activeTasks = tasksRes.data.filter((task) => !task.completed).length;
 
-        // Only count future (active) reminders
+        // Only count upcoming reminders
         const now = new Date();
         const activeReminders = remindersRes.data.filter((reminder) => {
           const parts = reminder.content.split(' at ');
           if (parts.length < 2) return false;
 
-          const datetimeStr = parts[1];
-          // Try parsing with both common formats
-          const parsedDateTime = new Date(datetimeStr);
+          const datetime = parts[1];
+          const [date, time] = datetime.split(' ');
+          if (!date || !time) return false;
 
-          return parsedDateTime > now;
+          const reminderDate = new Date(`${date}T${time}`);
+          return reminderDate > now;
         }).length;
 
         const savedNotes = notesRes.data.length;
