@@ -99,11 +99,11 @@ function Reminders() {
   //   return { title, date, time };
   // };
 
-  // const isPast = (dateStr, timeStr) => {
-  //   if (!dateStr || !timeStr) return false;
-  //   const dt = new Date(`${dateStr}T${timeStr}`);
-  //   return dt < new Date();
-  // };
+  const isPast = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return false;
+    const dt = new Date(`${dateStr}T${timeStr}`);
+    return dt < new Date();
+  };
 
 const formattedReminders = reminders.map((reminder) => {
   let title = reminder.content;
