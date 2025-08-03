@@ -2,12 +2,12 @@ import React, { useState, useRef } from "react";
 import "./VoiceButton.css";
 import axios from "axios";
 
-const VoiceButton = () => {
+const VoiceButton = ({ onPendingReminder }) => {
   const [isListening, setIsListening] = useState(false);
   const [response, setResponse] = useState("");
   const [responseType, setResponseType] = useState("");
-  const recognitionRef = useRef(null); // mic stays referenceable
-  const loopListening = useRef(false); // manual loop control
+  const recognitionRef = useRef(null);
+  const loopListening = useRef(false);
 
   const speak = (text) => {
     return new Promise((resolve) => {
@@ -36,10 +36,18 @@ const VoiceButton = () => {
         "https://honest-analysis-production.up.railway.app/api/command",
         { text: transcript }
       );
-      const msg = res.data.message || "Command processed and stored successfully.";
+
+      const msg = res.data.message || "Command processed successfully.";
       setResponse(msg);
       setResponseType("success");
       await speak(msg);
+
+      // Detect intent from backend response (simplified)
+      if (msg.toLowerCase().includes("reminder")) {
+        if (typeof onPendingReminder === "function") {
+          onPendingReminder(transcript); // Pass command up for popup
+        }
+      }
     } catch (error) {
       const msg = "There was an error. Please try again.";
       setResponse(msg);
@@ -49,7 +57,7 @@ const VoiceButton = () => {
 
     if (loopListening.current) {
       await speak("EchoMind is listening. Please say your command.");
-      listenOnce(); // recursive re-listen
+      listenOnce();
     }
   };
 
@@ -108,17 +116,11 @@ const VoiceButton = () => {
           <path d="M19 11a1 1 0 00-2 0 5 5 0 01-10 0 1 1 0 00-2 0 7 7 0 006 6.93V21h-3a1 1 0 000 2h8a1 1 0 000-2h-3v-3.07A7 7 0 0019 11z" />
         </svg>
       </button>
-
       <h2 className="heading">{isListening ? "Listening..." : "Activate EchoMind"}</h2>
       <p className="description">
-        {isListening
-          ? "Say your command clearly"
-          : "Click to speak and create a task, note, or reminder"}
+        {isListening ? "Say your command clearly" : "Click to speak and create a task, note, or reminder"}
       </p>
-
-      {response && (
-        <p className={`voice-response ${responseType}`}>{response}</p>
-      )}
+      {response && <p className={`voice-response ${responseType}`}>{response}</p>}
     </div>
   );
 };
