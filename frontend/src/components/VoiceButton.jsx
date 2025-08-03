@@ -6,12 +6,15 @@ const VoiceButton = () => {
   const [isListening, setIsListening] = useState(false);
   const [response, setResponse] = useState("");
   const [responseType, setResponseType] = useState("");
-  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
-  const [pendingReminder, setPendingReminder] = useState("");
-  const [reminderDateTime, setReminderDateTime] = useState("");
 
   const recognitionRef = useRef(null);
   const loopListening = useRef(false);
+
+  // NEW STATES for popup
+  const [showReminderModal, setShowReminderModal] = useState(false);
+  const [reminderText, setReminderText] = useState("");
+  const [reminderDate, setReminderDate] = useState("");
+  const [reminderTime, setReminderTime] = useState("");
 
   const speak = (text) => {
     return new Promise((resolve) => {
@@ -25,27 +28,42 @@ const VoiceButton = () => {
   };
 
   const handleReminderSubmission = async () => {
+    if (!reminderDate || !reminderTime) {
+      alert("Please select both date and time.");
+      return;
+    }
+
+    const fullDateTime = `${reminderDate}T${reminderTime}:00`;
+
     try {
       const res = await axios.post(
         "https://honest-analysis-production.up.railway.app/api/command",
         {
-          text: pendingReminder,
-          datetime: reminderDateTime,
+          text: `reminder: ${reminderText}`,
+          datetime: fullDateTime,
         }
       );
-      const msg = res.data.message || "Reminder saved successfully.";
+      const msg = "Reminder added successfully.";
       setResponse(msg);
       setResponseType("success");
       await speak(msg);
     } catch (error) {
-      const msg = "Failed to save reminder. Try again.";
+      const msg = "Error adding reminder.";
       setResponse(msg);
       setResponseType("error");
       await speak(msg);
     }
-    setShowDateTimePicker(false);
-    setPendingReminder("");
-    setReminderDateTime("");
+
+    // reset modal
+    setShowReminderModal(false);
+    setReminderText("");
+    setReminderDate("");
+    setReminderTime("");
+
+    if (loopListening.current) {
+      await speak("EchoMind is listening. Please say your command.");
+      listenOnce();
+    }
   };
 
   const handleRecognitionResult = async (transcript) => {
@@ -59,17 +77,15 @@ const VoiceButton = () => {
       return;
     }
 
-    // If reminder command detected
-    if (transcript.toLowerCase().includes("remind")) {
-      setPendingReminder(transcript);
-      setShowDateTimePicker(true);
-      setResponse("Please select date and time for your reminder.");
-      setResponseType("info");
+    // Detect Reminder command
+    if (transcript.includes("reminder")) {
+      const cleaned = transcript.replace("reminder", "").trim();
+      setReminderText(cleaned || "New Reminder");
+      setShowReminderModal(true);
       await speak("Please select date and time for your reminder.");
       return;
     }
 
-    // Otherwise, process normally
     try {
       const res = await axios.post(
         "https://honest-analysis-production.up.railway.app/api/command",
@@ -88,7 +104,7 @@ const VoiceButton = () => {
 
     if (loopListening.current) {
       await speak("EchoMind is listening. Please say your command.");
-      listenOnce(); // recursive
+      listenOnce();
     }
   };
 
@@ -159,26 +175,30 @@ const VoiceButton = () => {
         <p className={`voice-response ${responseType}`}>{response}</p>
       )}
 
-      {showDateTimePicker && (
-        <div className="popup">
-          <h3>Select Date and Time</h3>
-          <input
-            type="datetime-local"
-            value={reminderDateTime}
-            onChange={(e) => setReminderDateTime(e.target.value)}
-          />
-          <button
-            className="save-btn"
-            onClick={() => {
-              if (!reminderDateTime) {
-                alert("Please select a date and time.");
-                return;
-              }
-              handleReminderSubmission();
-            }}
-          >
-            Save Reminder
-          </button>
+      {/* 📅 Reminder Popup */}
+      {showReminderModal && (
+        <div className="reminder-modal">
+          <h3>Set Reminder: {reminderText}</h3>
+          <label>
+            Date:
+            <input
+              type="date"
+              value={reminderDate}
+              onChange={(e) => setReminderDate(e.target.value)}
+            />
+          </label>
+          <label>
+            Time:
+            <input
+              type="time"
+              value={reminderTime}
+              onChange={(e) => setReminderTime(e.target.value)}
+            />
+          </label>
+          <div style={{ marginTop: "10px" }}>
+            <button onClick={handleReminderSubmission}>Save Reminder</button>
+            <button onClick={() => setShowReminderModal(false)}>Cancel</button>
+          </div>
         </div>
       )}
     </div>
