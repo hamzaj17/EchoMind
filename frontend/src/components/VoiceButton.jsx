@@ -27,44 +27,46 @@ const VoiceButton = () => {
     });
   };
 
-  const handleReminderSubmission = async () => {
-    if (!reminderDate || !reminderTime) {
-      alert("Please select both date and time.");
-      return;
-    }
+  
+const handleReminderSubmission = async () => {
+  if (!reminderDate || !reminderTime) {
+    alert("Please select both date and time.");
+    return;
+  }
 
-    const fullDateTime = `${reminderDate}T${reminderTime}:00`;
+  const fullDateTime = `${reminderDate}T${reminderTime}:00`;
 
-    try {
-      const res = await axios.post(
-        "https://honest-analysis-production.up.railway.app/api/command",
-        {
-          text: `reminder: ${reminderText}`,
-          datetime: fullDateTime,
-        }
-      );
-      const msg = "Reminder added successfully.";
-      setResponse(msg);
-      setResponseType("success");
-      await speak(msg);
-    } catch (error) {
-      const msg = "Error adding reminder.";
-      setResponse(msg);
-      setResponseType("error");
-      await speak(msg);
-    }
+  try {
+    const res = await axios.post(
+      "https://honest-analysis-production.up.railway.app/api/reminders",
+      {
+        content: reminderText,
+        datetime: fullDateTime,
+      }
+    );
+    const msg = "Reminder added successfully.";
+    setResponse(msg);
+    setResponseType("success");
+    await speak(msg);
+  } catch (error) {
+    const msg = "Error adding reminder.";
+    setResponse(msg);
+    setResponseType("error");
+    await speak(msg);
+  }
 
-    // reset modal
-    setShowReminderModal(false);
-    setReminderText("");
-    setReminderDate("");
-    setReminderTime("");
+  // reset modal
+  setShowReminderModal(false);
+  setReminderText("");
+  setReminderDate("");
+  setReminderTime("");
 
-    if (loopListening.current) {
-      await speak("EchoMind is listening. Please say your command.");
-      listenOnce();
-    }
-  };
+  if (loopListening.current) {
+    await speak("EchoMind is listening. Please say your command.");
+    listenOnce();
+  }
+};
+
 
   const handleRecognitionResult = async (transcript) => {
     if (transcript.includes("stop") || transcript.includes("exit")) {
@@ -175,7 +177,7 @@ const VoiceButton = () => {
         <p className={`voice-response ${responseType}`}>{response}</p>
       )}
 
-      {/* 📅 Reminder Popup */}
+      {/* Reminder Popup */}
       {showReminderModal && (
         <div className="reminder-modal">
           <h3>Set Reminder: {reminderText}</h3>
