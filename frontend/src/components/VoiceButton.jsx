@@ -2,10 +2,14 @@ import React, { useState, useRef } from "react";
 import "./VoiceButton.css";
 import axios from "axios";
 
-const VoiceButton = ({ onPendingReminder }) => {
+const VoiceButton = () => {
   const [isListening, setIsListening] = useState(false);
   const [response, setResponse] = useState("");
   const [responseType, setResponseType] = useState("");
+  const [showReminderForm, setShowReminderForm] = useState(false);
+  const [reminderTitle, setReminderTitle] = useState("");
+  const [reminderDate, setReminderDate] = useState("");
+  const [reminderTime, setReminderTime] = useState("");
   const recognitionRef = useRef(null);
   const loopListening = useRef(false);
 
@@ -36,18 +40,17 @@ const VoiceButton = ({ onPendingReminder }) => {
         "https://honest-analysis-production.up.railway.app/api/command",
         { text: transcript }
       );
-
-      const msg = res.data.message || "Command processed successfully.";
+      const msg = res.data.message || "Command processed and stored successfully.";
       setResponse(msg);
       setResponseType("success");
-      await speak(msg);
 
-      // Detect intent from backend response (simplified)
-      if (msg.toLowerCase().includes("reminder")) {
-        if (typeof onPendingReminder === "function") {
-          onPendingReminder(transcript); // Pass command up for popup
-        }
+      // Check if it's a reminder
+      if (transcript.includes("remind me")) {
+        setReminderTitle(transcript);
+        setShowReminderForm(true); // show the date/time popup
       }
+
+      await speak(msg);
     } catch (error) {
       const msg = "There was an error. Please try again.";
       setResponse(msg);
@@ -58,6 +61,36 @@ const VoiceButton = ({ onPendingReminder }) => {
     if (loopListening.current) {
       await speak("EchoMind is listening. Please say your command.");
       listenOnce();
+    }
+  };
+
+  const handleReminderSubmit = async (e) => {
+    e.preventDefault();
+    if (!reminderTitle || !reminderDate || !reminderTime) return;
+
+    const fullContent = `${reminderTitle} at ${reminderDate} ${reminderTime}`;
+    try {
+      const response = await axios.post(
+        "https://honest-analysis-production.up.railway.app/api/reminders",
+        {
+          content: fullContent,
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        setResponse("Reminder added successfully.");
+        setResponseType("success");
+      } else {
+        setResponse("Failed to add reminder.");
+        setResponseType("error");
+      }
+    } catch (error) {
+      setResponse("Error while saving reminder.");
+      setResponseType("error");
+    } finally {
+      setReminderTitle("");
+      setReminderDate("");
+      setReminderTime("");
+      setShowReminderForm(false);
     }
   };
 
@@ -116,11 +149,42 @@ const VoiceButton = ({ onPendingReminder }) => {
           <path d="M19 11a1 1 0 00-2 0 5 5 0 01-10 0 1 1 0 00-2 0 7 7 0 006 6.93V21h-3a1 1 0 000 2h8a1 1 0 000-2h-3v-3.07A7 7 0 0019 11z" />
         </svg>
       </button>
+
       <h2 className="heading">{isListening ? "Listening..." : "Activate EchoMind"}</h2>
       <p className="description">
-        {isListening ? "Say your command clearly" : "Click to speak and create a task, note, or reminder"}
+        {isListening
+          ? "Say your command clearly"
+          : "Click to speak and create a task, note, or reminder"}
       </p>
-      {response && <p className={`voice-response ${responseType}`}>{response}</p>}
+
+      {response && (
+        <p className={`voice-response ${responseType}`}>{response}</p>
+      )}
+
+      {showReminderForm && (
+        <div className="reminder-popup-form">
+          <form onSubmit={handleReminderSubmit}>
+            <h3>Set date and time for your reminder</h3>
+            <input
+              type="date"
+              value={reminderDate}
+              onChange={(e) => setReminderDate(e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
+              required
+            />
+            <input
+              type="time"
+              value={reminderTime}
+              onChange={(e) => setReminderTime(e.target.value)}
+              required
+            />
+            <div className="popup-buttons">
+              <button type="submit" className="save-btn">Save</button>
+              <button type="button" className="cancel-btn" onClick={() => setShowReminderForm(false)}>Cancel</button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
