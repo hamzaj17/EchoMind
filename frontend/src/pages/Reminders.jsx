@@ -50,7 +50,7 @@ function Reminders() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          content: `${reminderTitle} at ${fullDateTime}`, // ✅ Send human-readable version
+          content: reminderTitle, // ✅ Send human-readable version
           datetime: fullDateTime // ✅ Send ISO-style datetime to backend
         })
       });
