@@ -105,25 +105,25 @@ function Reminders() {
     return dt < new Date();
   };
 
-  
+
 const formattedReminders = reminders.map((reminder) => {
   let title = reminder.content;
   let date = '';
   let time = '';
 
   if (reminder.datetime) {
-    const dt = new Date(reminder.datetime);
+    const dt = new Date(reminder.datetime); // This is stored as UTC
 
-    // Extract local date
-    const yyyy = dt.getFullYear();
-    const mm = String(dt.getMonth() + 1).padStart(2, '0');
-    const dd = String(dt.getDate()).padStart(2, '0');
-    date = `${yyyy}-${mm}-${dd}`;  // "YYYY-MM-DD"
+    // Convert to user's local time using toLocaleString
+    const localDateTime = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
+    const yyyy = localDateTime.getFullYear();
+    const mm = String(localDateTime.getMonth() + 1).padStart(2, '0');
+    const dd = String(localDateTime.getDate()).padStart(2, '0');
+    date = `${yyyy}-${mm}-${dd}`; // YYYY-MM-DD
 
-    // Extract local time in HH:MM (24hr) format
-    const hours = String(dt.getHours()).padStart(2, '0');
-    const minutes = String(dt.getMinutes()).padStart(2, '0');
-    time = `${hours}:${minutes}`; // "HH:MM"
+    const hours = String(localDateTime.getHours()).padStart(2, '0');
+    const minutes = String(localDateTime.getMinutes()).padStart(2, '0');
+    time = `${hours}:${minutes}`; // HH:MM (24hr)
   }
 
   return {
@@ -138,6 +138,7 @@ const formattedReminders = reminders.map((reminder) => {
   const dateB = new Date(`${b.date}T${b.time}`);
   return dateA - dateB;
 });
+
 
 
 
