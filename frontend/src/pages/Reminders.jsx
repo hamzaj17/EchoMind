@@ -105,16 +105,27 @@ function Reminders() {
     return dt < new Date();
   };
 
-  const formattedReminders = reminders.map((reminder) => {
-    const { title, date, time } = parseDateTimeFromContent(reminder.content);
-    return {
-      id: reminder.id,
-      title,
-      date,
-      time,
-      isPast: isPast(date, time)
-    };
-  }).sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+const formattedReminders = reminders.map((reminder) => {
+  let title = reminder.content;
+  let date = '';
+  let time = '';
+
+  if (reminder.datetime) {
+    const dt = new Date(reminder.datetime);
+    date = dt.toISOString().split('T')[0];
+    time = dt.toTimeString().slice(0, 5); // "HH:MM" format
+  }
+
+  return {
+    id: reminder.id,
+    title,
+    date,
+    time,
+    datetime: reminder.datetime,
+    isPast: isPast(date, time)
+  };
+}).sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
 
   return (
     <div className="reminders-container">
