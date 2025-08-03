@@ -220,7 +220,7 @@ function Reminders() {
                     <div className={`reminder-title-text ${reminder.isPast ? 'strikethrough' : ''}`}>
                       {reminder.title}
                     </div>
-                    <div className="reminder-datetime">{`${reminder.time}`}</div>
+                    <div className="reminder-datetime">{`${reminder.date} ${reminder.time}`}</div>
                   </div>
                 </div>
                 <button
