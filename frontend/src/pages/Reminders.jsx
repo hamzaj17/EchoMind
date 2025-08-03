@@ -32,15 +32,15 @@ function Reminders() {
     e.preventDefault();
     if (reminderTitle.trim() === '' || !reminderDate || !reminderTime) return;
 
-    const fullDateTime = `${reminderDate}T${reminderTime}`;
+    const fullDateTime = `${reminderDate} ${reminderTime}`; // ✅ Fixed: proper string formatting
 
     try {
       const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          content: reminderTitle,
-          datetime: fullDateTime, // <-- This will go to DB
+          content: `${reminderTitle} at ${fullDateTime}`, // ✅ Send human-readable version
+          datetime: fullDateTime // ✅ Send ISO-style datetime to backend
         })
       });
 
@@ -80,21 +80,28 @@ function Reminders() {
 
   const cancelDelete = () => setDeleteId(null);
 
-  const isPast = (datetime) => {
-    if (!datetime) return false;
-    return new Date(datetime) < new Date();
+  const parseDateTimeFromContent = (content) => {
+    const parts = content.split(' at ');
+    if (parts.length < 2) return { title: content, date: '', time: '' };
+    const [title, datetime] = parts;
+    const [date, time] = datetime.split(' ');
+    return { title, date, time };
+  };
+
+  const isPast = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return false;
+    const dt = new Date(`${dateStr}T${timeStr}`);
+    return dt < new Date();
   };
 
   const formattedReminders = reminders.map((reminder) => {
-    const dt = new Date(reminder.datetime);
-    const date = dt.toISOString().split('T')[0];
-    const time = dt.toTimeString().split(':').slice(0, 2).join(':');
+    const { title, date, time } = parseDateTimeFromContent(reminder.content);
     return {
       id: reminder.id,
-      title: reminder.content,
+      title,
       date,
       time,
-      isPast: isPast(reminder.datetime)
+      isPast: isPast(date, time)
     };
   }).sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
 
