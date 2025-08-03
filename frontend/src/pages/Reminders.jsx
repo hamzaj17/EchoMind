@@ -26,7 +26,18 @@ function Reminders() {
 
   useEffect(() => {
     fetchReminders();
+
+    const handleReminderUpdate = () => {
+      fetchReminders();
+    };
+
+    window.addEventListener("reminderUpdated", handleReminderUpdate);
+
+    return () => {
+      window.removeEventListener("reminderUpdated", handleReminderUpdate);
+    };
   }, []);
+
 
   const handleAddReminder = async (e) => {
     e.preventDefault();

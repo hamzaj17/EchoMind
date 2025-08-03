@@ -55,6 +55,8 @@ const handleReminderSubmission = async () => {
     await speak(msg);
   }
 
+  const updateEvent = new Event("reminderUpdated");
+  window.dispatchEvent(updateEvent);
   // reset modal
   setShowReminderModal(false);
   setReminderText("");
