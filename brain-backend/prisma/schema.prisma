@@ -21,10 +21,11 @@ model Note {
 }
 
 model Reminder {
-  id          Int      @id @default(autoincrement())
-  content     String
-  createdAt   DateTime @default(now())
-} 
+  id        Int      @id @default(autoincrement())
+  content   String
+  datetime  DateTime?
+  createdAt DateTime @default(now())
+}
 
 
 model Command {

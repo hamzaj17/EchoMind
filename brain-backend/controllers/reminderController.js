@@ -2,14 +2,17 @@ import prisma from '../prisma/prismaClient.js';
 
 export const createReminder = async (req, res) => {
     try {
-        const { content } = req.body;
+        const { content, datetime } = req.body;
 
         if (!content) {
             return res.status(400).json({ message: "Missing 'content' in request body." });
         }
 
         const reminder = await prisma.reminder.create({
-            data: { content }
+            data: {
+                content,
+                datetime: datetime ? new Date(datetime) : null  // convert string to Date
+            }
         });
 
         res.status(201).json({ message: "Reminder created successfully.", data: reminder });
