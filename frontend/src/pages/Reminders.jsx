@@ -38,41 +38,41 @@ function Reminders() {
     };
   }, []);
 
+
   const handleAddReminder = async (e) => {
-    e.preventDefault();
-    if (reminderTitle.trim() === '' || !reminderDate || !reminderTime) return;
+  e.preventDefault();
 
-    const [year, month, day] = reminderDate.split('-');
-    const [hours, minutes] = reminderTime.split(':');
+  if (reminderTitle.trim() === '' || !reminderDate || !reminderTime) return;
 
-    const combinedDateTime = new Date(
-      Number(year), Number(month) - 1, Number(day),
-      Number(hours), Number(minutes)
-    );
+  try {
+    // Combine date and time into a valid local ISO string
+    const localDateTimeString = `${reminderDate}T${reminderTime}`;
+    const localDateTime = new Date(localDateTimeString); // This will be treated as local time
+    const utcDateTime = localDateTime.toISOString();     // Convert to UTC before sending
 
-    try {
-      const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: reminderTitle,
-          datetime: combinedDateTime.toISOString()
-        })
-      });
+    const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: reminderTitle,
+        datetime: utcDateTime // ✅ Correct format
+      })
+    });
 
-      if (response.ok) {
-        await fetchReminders();
-        setReminderTitle('');
-        setReminderDate('');
-        setReminderTime('');
-        setShowAddForm(false);
-      } else {
-        console.error('Failed to create reminder');
-      }
-    } catch (error) {
-      console.error('Error creating reminder:', error);
+    if (response.ok) {
+      await fetchReminders();
+      setReminderTitle('');
+      setReminderDate('');
+      setReminderTime('');
+      setShowAddForm(false);
+    } else {
+      console.error('Failed to create reminder');
     }
-  };
+  } catch (error) {
+    console.error('Error creating reminder:', error);
+  }
+};
+
 
   const confirmDeleteReminder = (id) => setDeleteId(id);
 
@@ -96,38 +96,66 @@ function Reminders() {
 
   const cancelDelete = () => setDeleteId(null);
 
+  // const parseDateTimeFromContent = (content) => {
+  //   const parts = content.split(' at ');
+  //   if (parts.length < 2) return { title: content, date: '', time: '' };
+  //   const [title, datetime] = parts;
+  //   const [date, time] = datetime.split(' ');
+  //   return { title, date, time };
+  // };
+
   const isPast = (dateStr, timeStr) => {
     if (!dateStr || !timeStr) return false;
     const dt = new Date(`${dateStr}T${timeStr}`);
     return dt < new Date();
   };
 
-  const formattedReminders = reminders.map((reminder) => {
-    let title = reminder.content;
-    let date = '';
-    let time = '';
 
-    if (reminder.datetime) {
-      const dt = new Date(reminder.datetime);
-      const localDate = dt.toLocaleDateString('sv-SE'); // YYYY-MM-DD
-      const localTime = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+const formattedReminders = reminders.map((reminder) => {
+  let title = reminder.content;
+  let date = '';
+  let time = '';
 
-      date = localDate;
-      time = localTime;
-    }
+  if (reminder.datetime) {
+    const dt = new Date(reminder.datetime); // Parsed as UTC
 
-    return {
-      id: reminder.id,
-      title,
-      date,
-      time,
-      isPast: isPast(date, time),
+    // Convert to Pakistan time using toLocaleString
+    const options = {
+      timeZone: 'Asia/Karachi',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, // 24hr format
     };
-  }).sort((a, b) => {
-    const dateA = new Date(`${a.date}T${a.time}`);
-    const dateB = new Date(`${b.date}T${b.time}`);
-    return dateA - dateB;
-  });
+
+    const formatter = new Intl.DateTimeFormat('en-CA', options); // YYYY-MM-DD
+    const parts = formatter.formatToParts(dt);
+    const lookup = {};
+    parts.forEach(({ type, value }) => {
+      lookup[type] = value;
+    });
+
+    date = `${lookup.year}-${lookup.month}-${lookup.day}`;
+    time = `${lookup.hour}:${lookup.minute}`;
+  }
+
+  return {
+    id: reminder.id,
+    title,
+    date,
+    time,
+    isPast: isPast(date, time),
+  };
+}).sort((a, b) => {
+  const dateA = new Date(`${a.date}T${a.time}`);
+  const dateB = new Date(`${b.date}T${b.time}`);
+  return dateA - dateB;
+});
+
+
+
 
   return (
     <div className="reminders-container">
