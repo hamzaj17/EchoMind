@@ -91,19 +91,19 @@ function Reminders() {
 
   const cancelDelete = () => setDeleteId(null);
 
-  const parseDateTimeFromContent = (content) => {
-    const parts = content.split(' at ');
-    if (parts.length < 2) return { title: content, date: '', time: '' };
-    const [title, datetime] = parts;
-    const [date, time] = datetime.split(' ');
-    return { title, date, time };
-  };
+  // const parseDateTimeFromContent = (content) => {
+  //   const parts = content.split(' at ');
+  //   if (parts.length < 2) return { title: content, date: '', time: '' };
+  //   const [title, datetime] = parts;
+  //   const [date, time] = datetime.split(' ');
+  //   return { title, date, time };
+  // };
 
-  const isPast = (dateStr, timeStr) => {
-    if (!dateStr || !timeStr) return false;
-    const dt = new Date(`${dateStr}T${timeStr}`);
-    return dt < new Date();
-  };
+  // const isPast = (dateStr, timeStr) => {
+  //   if (!dateStr || !timeStr) return false;
+  //   const dt = new Date(`${dateStr}T${timeStr}`);
+  //   return dt < new Date();
+  // };
 
 const formattedReminders = reminders.map((reminder) => {
   let title = reminder.content;
@@ -112,8 +112,8 @@ const formattedReminders = reminders.map((reminder) => {
 
   if (reminder.datetime) {
     const dt = new Date(reminder.datetime);
-    date = dt.toISOString().split('T')[0];
-    time = dt.toTimeString().slice(0, 5); // "HH:MM" format
+    date = dt.toISOString().split('T')[0]; // "YYYY-MM-DD"
+    time = dt.toTimeString().slice(0, 5);   // "HH:MM"
   }
 
   return {
@@ -121,10 +121,15 @@ const formattedReminders = reminders.map((reminder) => {
     title,
     date,
     time,
-    datetime: reminder.datetime,
-    isPast: isPast(date, time)
+    isPast: isPast(date, time),
   };
-}).sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+}).sort((a, b) => {
+  // Use real datetime fields for sorting
+  const dateA = new Date(a.date + 'T' + a.time);
+  const dateB = new Date(b.date + 'T' + b.time);
+  return dateA - dateB;
+});
+
 
 
   return (
