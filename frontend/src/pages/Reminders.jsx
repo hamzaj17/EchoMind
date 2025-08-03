@@ -105,16 +105,26 @@ function Reminders() {
     return dt < new Date();
   };
 
+  
 const formattedReminders = reminders.map((reminder) => {
-  // let title = reminder.content;
-  // let date = '';
-  // let time = '';
+  let title = reminder.content;
+  let date = '';
+  let time = '';
 
-  // if (reminder.datetime) {
+  if (reminder.datetime) {
     const dt = new Date(reminder.datetime);
-    const date = dt.toISOString().slice(0,10); // "YYYY-MM-DD"
-    const time = dt.toTimeString().slice(0, 5);   // "HH:MM"
-  // }
+
+    // Extract local date
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    date = `${yyyy}-${mm}-${dd}`;  // "YYYY-MM-DD"
+
+    // Extract local time in HH:MM (24hr) format
+    const hours = String(dt.getHours()).padStart(2, '0');
+    const minutes = String(dt.getMinutes()).padStart(2, '0');
+    time = `${hours}:${minutes}`; // "HH:MM"
+  }
 
   return {
     id: reminder.id,
@@ -124,9 +134,8 @@ const formattedReminders = reminders.map((reminder) => {
     isPast: isPast(date, time),
   };
 }).sort((a, b) => {
-  // Use real datetime fields for sorting
-  const dateA = new Date(a.date + 'T' + a.time);
-  const dateB = new Date(b.date + 'T' + b.time);
+  const dateA = new Date(`${a.date}T${a.time}`);
+  const dateB = new Date(`${b.date}T${b.time}`);
   return dateA - dateB;
 });
 
