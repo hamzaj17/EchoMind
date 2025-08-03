@@ -38,41 +38,37 @@ function Reminders() {
     };
   }, []);
 
-
   const handleAddReminder = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    if (reminderTitle.trim() === '' || !reminderDate || !reminderTime) return;
 
-  if (reminderTitle.trim() === '' || !reminderDate || !reminderTime) return;
+    // Create the datetime string in the user's local timezone
+    // This ensures the time is treated as local time, not UTC
+    const localDateTime = `${reminderDate}T${reminderTime}:00`;
 
-  try {
-    // Combine date and time into a valid local ISO string
-    const localDateTimeString = `${reminderDate}T${reminderTime}`;
-    const localDateTime = new Date(localDateTimeString); // This will be treated as local time
-    const utcDateTime = localDateTime.toISOString();     // Convert to UTC before sending
+    try {
+      const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: reminderTitle,
+          datetime: localDateTime // Send as ISO string but representing local time
+        })
+      });
 
-    const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        content: reminderTitle,
-        datetime: utcDateTime // ✅ Correct format
-      })
-    });
-
-    if (response.ok) {
-      await fetchReminders();
-      setReminderTitle('');
-      setReminderDate('');
-      setReminderTime('');
-      setShowAddForm(false);
-    } else {
-      console.error('Failed to create reminder');
+      if (response.ok) {
+        await fetchReminders();
+        setReminderTitle('');
+        setReminderDate('');
+        setReminderTime('');
+        setShowAddForm(false);
+      } else {
+        console.error('Failed to create reminder');
+      }
+    } catch (error) {
+      console.error('Error creating reminder:', error);
     }
-  } catch (error) {
-    console.error('Error creating reminder:', error);
-  }
-};
-
+  };
 
   const confirmDeleteReminder = (id) => setDeleteId(id);
 
@@ -96,66 +92,50 @@ function Reminders() {
 
   const cancelDelete = () => setDeleteId(null);
 
-  // const parseDateTimeFromContent = (content) => {
-  //   const parts = content.split(' at ');
-  //   if (parts.length < 2) return { title: content, date: '', time: '' };
-  //   const [title, datetime] = parts;
-  //   const [date, time] = datetime.split(' ');
-  //   return { title, date, time };
-  // };
-
   const isPast = (dateStr, timeStr) => {
     if (!dateStr || !timeStr) return false;
     const dt = new Date(`${dateStr}T${timeStr}`);
     return dt < new Date();
   };
 
+  // FIXED: Proper timezone handling for Pakistan
+  const formattedReminders = reminders.map((reminder) => {
+    let title = reminder.content;
+    let date = '';
+    let time = '';
 
-const formattedReminders = reminders.map((reminder) => {
-  let title = reminder.content;
-  let date = '';
-  let time = '';
+    if (reminder.datetime) {
+      // Method 1: If your backend stores the exact datetime you sent (recommended)
+      // Just parse it directly without timezone conversion
+      const dtString = reminder.datetime;
+      
+      if (dtString.includes('T')) {
+        // If it's in ISO format (YYYY-MM-DDTHH:mm:ss)
+        const [datePart, timePart] = dtString.split('T');
+        date = datePart; // YYYY-MM-DD
+        time = timePart.substring(0, 5); // HH:MM (first 5 chars to get HH:MM)
+      } else {
+        // If it's in "YYYY-MM-DD HH:MM" format
+        const parts = dtString.split(' ');
+        if (parts.length >= 2) {
+          date = parts[0]; // YYYY-MM-DD
+          time = parts[1].substring(0, 5); // HH:MM
+        }
+      }
+    }
 
-  if (reminder.datetime) {
-    const dt = new Date(reminder.datetime); // Parsed as UTC
-
-    // Convert to Pakistan time using toLocaleString
-    const options = {
-      timeZone: 'Asia/Karachi',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false, // 24hr format
+    return {
+      id: reminder.id,
+      title,
+      date,
+      time,
+      isPast: isPast(date, time),
     };
-
-    const formatter = new Intl.DateTimeFormat('en-CA', options); // YYYY-MM-DD
-    const parts = formatter.formatToParts(dt);
-    const lookup = {};
-    parts.forEach(({ type, value }) => {
-      lookup[type] = value;
-    });
-
-    date = `${lookup.year}-${lookup.month}-${lookup.day}`;
-    time = `${lookup.hour}:${lookup.minute}`;
-  }
-
-  return {
-    id: reminder.id,
-    title,
-    date,
-    time,
-    isPast: isPast(date, time),
-  };
-}).sort((a, b) => {
-  const dateA = new Date(`${a.date}T${a.time}`);
-  const dateB = new Date(`${b.date}T${b.time}`);
-  return dateA - dateB;
-});
-
-
-
+  }).sort((a, b) => {
+    const dateA = new Date(`${a.date}T${a.time}`);
+    const dateB = new Date(`${b.date}T${b.time}`);
+    return dateA - dateB;
+  });
 
   return (
     <div className="reminders-container">
@@ -240,7 +220,7 @@ const formattedReminders = reminders.map((reminder) => {
                     <div className={`reminder-title-text ${reminder.isPast ? 'strikethrough' : ''}`}>
                       {reminder.title}
                     </div>
-                    <div className="reminder-datetime">{`${reminder.date} ${reminder.time}`}</div>
+                    <div className="reminder-datetime">{`${reminder.time}`}</div>
                   </div>
                 </div>
                 <button
