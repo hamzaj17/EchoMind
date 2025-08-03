@@ -1,5 +1,6 @@
 import prisma from '../prisma/prismaClient.js';
 
+// Create Reminder
 export const createReminder = async (req, res) => {
     try {
         const { content, datetime } = req.body;
@@ -11,7 +12,7 @@ export const createReminder = async (req, res) => {
         const reminder = await prisma.reminder.create({
             data: {
                 content,
-                datetime: datetime ? new Date(datetime) : null  // convert string to Date
+                datetime: datetime ? new Date(datetime) : null  // Ensure proper Date object
             }
         });
 
@@ -22,11 +23,19 @@ export const createReminder = async (req, res) => {
     }
 };
 
+// Get All Reminders (Include datetime explicitly)
 export const getReminders = async (req, res) => {
     try {
         const reminders = await prisma.reminder.findMany({
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                content: true,
+                datetime: true,       // ✅ Ensure this is sent to frontend
+                createdAt: true
+            }
         });
+
         res.json(reminders);
     } catch (error) {
         console.error(error);
@@ -34,6 +43,7 @@ export const getReminders = async (req, res) => {
     }
 };
 
+// Delete Reminder
 export const deleteReminder = async (req, res) => {
     try {
         const { id } = req.params;
