@@ -32,12 +32,16 @@ function Reminders() {
     e.preventDefault();
     if (reminderTitle.trim() === '' || !reminderDate || !reminderTime) return;
 
-    const fullDateTime = `${reminderDate} ${reminderTime}`;
+    const fullDateTime = `${reminderDate}T${reminderTime}`;
+
     try {
       const response = await fetch('https://honest-analysis-production.up.railway.app/api/reminders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: `${reminderTitle} at ${fullDateTime}` })
+        body: JSON.stringify({
+          content: reminderTitle,
+          datetime: fullDateTime, // <-- This will go to DB
+        })
       });
 
       if (response.ok) {
@@ -76,28 +80,21 @@ function Reminders() {
 
   const cancelDelete = () => setDeleteId(null);
 
-  const parseDateTimeFromContent = (content) => {
-    const parts = content.split(' at ');
-    if (parts.length < 2) return { title: content, date: '', time: '' };
-    const [title, datetime] = parts;
-    const [date, time] = datetime.split(' ');
-    return { title, date, time };
-  };
-
-  const isPast = (dateStr, timeStr) => {
-    if (!dateStr || !timeStr) return false;
-    const dt = new Date(`${dateStr}T${timeStr}`);
-    return dt < new Date();
+  const isPast = (datetime) => {
+    if (!datetime) return false;
+    return new Date(datetime) < new Date();
   };
 
   const formattedReminders = reminders.map((reminder) => {
-    const { title, date, time } = parseDateTimeFromContent(reminder.content);
+    const dt = new Date(reminder.datetime);
+    const date = dt.toISOString().split('T')[0];
+    const time = dt.toTimeString().split(':').slice(0, 2).join(':');
     return {
       id: reminder.id,
-      title,
+      title: reminder.content,
       date,
       time,
-      isPast: isPast(date, time)
+      isPast: isPast(reminder.datetime)
     };
   }).sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
 
