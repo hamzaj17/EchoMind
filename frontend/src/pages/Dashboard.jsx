@@ -34,7 +34,7 @@ const DashboardSummary = () => {
 
         const activeTasks = tasksRes.data.filter((task) => !task.completed).length;
 
-        // FIXED: Proper reminder counting logic - only future reminders are active
+        // UPDATED: Fixed reminder counting logic to match Reminders.jsx logic
         const now = new Date();
         const activeReminders = remindersRes.data.filter((reminder) => {
           if (!reminder.datetime) return false;
@@ -63,14 +63,20 @@ const DashboardSummary = () => {
             return false; // Invalid date
           }
 
-          // Only count reminders that are clearly in the future
-          // Add a small buffer (1 minute) to avoid counting reminders that just passed
-          const bufferTime = 60 * 1000; // 1 minute in milliseconds
-          const currentTimeWithBuffer = new Date(now.getTime() + bufferTime);
+          // CHANGED: Use the same logic as Reminders.jsx - compare by minute, not exact time
+          // Get the reminder time down to the minute (ignore seconds)
+          const reminderMinute = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate(), reminderDate.getHours(), reminderDate.getMinutes());
           
-          console.log('Reminder:', dtString, 'Parsed as:', reminderDate, 'Current time:', now, 'Is future?', reminderDate > currentTimeWithBuffer);
+          // Get the current time down to the minute (ignore seconds)  
+          const currentMinute = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
           
-          return reminderDate > currentTimeWithBuffer;
+          // Only consider it past if the reminder minute is strictly before the current minute
+          // If reminder minute >= current minute, it's still active
+          const isActive = reminderMinute >= currentMinute;
+          
+          console.log('Reminder:', dtString, 'Parsed as:', reminderDate, 'Current time:', now, 'Is active?', isActive);
+          
+          return isActive;
         }).length;
 
         const savedNotes = notesRes.data.length;
