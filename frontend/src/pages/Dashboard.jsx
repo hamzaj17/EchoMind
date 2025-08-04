@@ -34,17 +34,23 @@ const DashboardSummary = () => {
 
         const activeTasks = tasksRes.data.filter((task) => !task.completed).length;
 
-        // Only count upcoming reminders
+        // FIXED: Proper reminder counting logic
         const now = new Date();
         const activeReminders = remindersRes.data.filter((reminder) => {
-          const parts = reminder.content.split(' at ');
-          if (parts.length < 2) return false;
+          if (!reminder.datetime) return false;
 
-          const datetime = parts[1];
-          const [date, time] = datetime.split(' ');
-          if (!date || !time) return false;
+          let reminderDate;
+          
+          // Handle different datetime formats from your database
+          if (reminder.datetime.includes('T')) {
+            // ISO format: "2025-01-15T18:25:00"
+            reminderDate = new Date(reminder.datetime);
+          } else {
+            // Space format: "2025-01-15 18:25"
+            reminderDate = new Date(reminder.datetime.replace(' ', 'T'));
+          }
 
-          const reminderDate = new Date(`${date}T${time}`);
+          // Check if the reminder is in the future (active)
           return reminderDate > now;
         }).length;
 
@@ -64,6 +70,22 @@ const DashboardSummary = () => {
     };
 
     fetchCounts();
+
+    // ADDED: Listen for updates from other components
+    const handleDataUpdate = () => {
+      fetchCounts();
+    };
+
+    // Listen for custom events when data changes
+    window.addEventListener("taskUpdated", handleDataUpdate);
+    window.addEventListener("reminderUpdated", handleDataUpdate);
+    window.addEventListener("noteUpdated", handleDataUpdate);
+
+    return () => {
+      window.removeEventListener("taskUpdated", handleDataUpdate);
+      window.removeEventListener("reminderUpdated", handleDataUpdate);
+      window.removeEventListener("noteUpdated", handleDataUpdate);
+    };
   }, []);
 
   return (
