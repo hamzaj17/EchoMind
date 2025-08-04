@@ -70,7 +70,7 @@ This guide ensures **anyone can clone, run, and test EchoMind on any machine rel
 
 ✅ For FastAPI Insight Engine (fastapi, uvicorn)
 
-✅ For SpeechRecognition (libraries: speech_recognition, requests) [optional: for speech_recognition only using backend]
+✅ For SpeechRecognition (libraries: speech_recognition, requests, pyttsx3) [optional: for speech_recognition only using backend]
 
 ✅ For frontend: React, react-icons, Vite, axios, React Router. 
 
