@@ -42,18 +42,33 @@ const DashboardSummary = () => {
           let reminderDate;
           
           // Handle different datetime formats from your database
-          if (reminder.datetime.includes('T')) {
-            // ISO format: "2025-01-15T18:25:00"
-            reminderDate = new Date(reminder.datetime);
+          const dtString = reminder.datetime;
+          
+          if (dtString.includes('T')) {
+            // Parse as local time (same logic as in Reminders.jsx)
+            const [datePart, timePart] = dtString.split('T');
+            const timeOnly = timePart.substring(0, 5); // Get HH:MM
+            reminderDate = new Date(`${datePart}T${timeOnly}:00`);
           } else {
             // Space format: "2025-01-15 18:25"
-            reminderDate = new Date(reminder.datetime.replace(' ', 'T'));
+            const parts = dtString.split(' ');
+            if (parts.length >= 2) {
+              const datePart = parts[0];
+              const timeOnly = parts[1].substring(0, 5);
+              reminderDate = new Date(`${datePart}T${timeOnly}:00`);
+            }
+          }
+
+          if (!reminderDate || isNaN(reminderDate.getTime())) {
+            return false; // Invalid date
           }
 
           // Only count reminders that are clearly in the future
           // Add a small buffer (1 minute) to avoid counting reminders that just passed
           const bufferTime = 60 * 1000; // 1 minute in milliseconds
           const currentTimeWithBuffer = new Date(now.getTime() + bufferTime);
+          
+          console.log('Reminder:', dtString, 'Parsed as:', reminderDate, 'Current time:', now, 'Is future?', reminderDate > currentTimeWithBuffer);
           
           return reminderDate > currentTimeWithBuffer;
         }).length;
