@@ -261,6 +261,8 @@ https://echo-mind-nu.vercel.app/
 
 ✅ AI-powered intent and entity extraction.
 
+✅ Tasks, Reminders, Notes can be added manually and through speech recognition.
+
 ✅ Structured storage of tasks, reminders, and notes.
 
 ✅ Clean microservices architecture (FastAPI + Node.js + Neon).
