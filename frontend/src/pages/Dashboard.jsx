@@ -34,7 +34,7 @@ const DashboardSummary = () => {
 
         const activeTasks = tasksRes.data.filter((task) => !task.completed).length;
 
-        // FIXED: Proper reminder counting logic
+        // FIXED: Proper reminder counting logic - only future reminders are active
         const now = new Date();
         const activeReminders = remindersRes.data.filter((reminder) => {
           if (!reminder.datetime) return false;
@@ -50,8 +50,12 @@ const DashboardSummary = () => {
             reminderDate = new Date(reminder.datetime.replace(' ', 'T'));
           }
 
-          // Check if the reminder is in the future (active)
-          return reminderDate > now;
+          // Only count reminders that are clearly in the future
+          // Add a small buffer (1 minute) to avoid counting reminders that just passed
+          const bufferTime = 60 * 1000; // 1 minute in milliseconds
+          const currentTimeWithBuffer = new Date(now.getTime() + bufferTime);
+          
+          return reminderDate > currentTimeWithBuffer;
         }).length;
 
         const savedNotes = notesRes.data.length;
