@@ -179,29 +179,45 @@ const handleReminderSubmission = async () => {
         <p className={`voice-response ${responseType}`}>{response}</p>
       )}
 
-      {/* Reminder Popup */}
+      {/* UPDATED: Modern Reminder Modal with Overlay */}
       {showReminderModal && (
-        <div className="reminder-modal">
-          <h3>Set Reminder: {reminderText}</h3>
-          <label>
-            Date:
-            <input
-              type="date"
-              value={reminderDate}
-              onChange={(e) => setReminderDate(e.target.value)}
-            />
-          </label>
-          <label>
-            Time:
-            <input
-              type="time"
-              value={reminderTime}
-              onChange={(e) => setReminderTime(e.target.value)}
-            />
-          </label>
-          <div style={{ marginTop: "10px" }}>
-            <button onClick={handleReminderSubmission}>Save Reminder</button>
-            <button onClick={() => setShowReminderModal(false)}>Cancel</button>
+        <div className="reminder-modal-overlay" onClick={() => setShowReminderModal(false)}>
+          <div className="reminder-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Set Reminder: {reminderText}</h3>
+            
+            <div className="reminder-input-group">
+              <label>Date</label>
+              <input
+                type="date"
+                value={reminderDate}
+                onChange={(e) => setReminderDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            
+            <div className="reminder-input-group">
+              <label>Time</label>
+              <input
+                type="time"
+                value={reminderTime}
+                onChange={(e) => setReminderTime(e.target.value)}
+              />
+            </div>
+            
+            <div className="reminder-modal-buttons">
+              <button 
+                className="reminder-save-btn" 
+                onClick={handleReminderSubmission}
+              >
+                Save Reminder
+              </button>
+              <button 
+                className="reminder-cancel-btn" 
+                onClick={() => setShowReminderModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
