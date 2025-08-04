@@ -1,14 +1,16 @@
-# 🚀 EchoMind: CLI Voice-Assistant, AI Insight Engine + Smart Task, Reminder, Note Manager
+# 🚀 EchoMind: CLI Voice-Assistant, AI Insight Engine + Smart Task, Reminder, Note Manager + Frontend Web UI
 
 EchoMind is a **voice-driven, AI-enhanced productivity assistant** that:
 
-✅ Voice/text command recognition (voice command recognition using pyttsx3).
+✅ Voice/text command recognition (voice command recognition).
 
 ✅ Parses spoken/text commands using an **AI Insight Engine (FastAPI)**.
 
 ✅ Extracts structured intents/entities.
 
 ✅ Stores tasks, reminders, and notes in a **Neon PostgreSQL database** using a **Node.js backend** deployed on **Railway**.
+
+✅ **Now includes a fully functional web-based frontend UI** to manage reminders, notes, and tasks.
 
 ✅ Fully cloud-based and globally accessible, no local server dependency.
 
@@ -34,7 +36,19 @@ This guide ensures **anyone can clone, run, and test EchoMind on any machine rel
   
 ├── 📁 voice-assistant/ # Speech Input │
   └── voice_assistant.py │
-└── README.md # Project documentation for GitHub </pre>
+
+├── 📁 frontend/ # React Web UI to manage notes, reminders, and tasks | 
+  ├── public/ │ 
+  ├── src/ │ 
+  ├── index.html/ │ 
+  ├── vercel.json │ 
+  ├── vite.config.js │
+  ├── package.json │ 
+  ├── package-lock.json │
+  └── ...  
+
+🗋 README.md # Project documentation for GitHub
+</pre>
 
 ---
 
@@ -116,9 +130,9 @@ https://echomind-production-48ea.up.railway.app/parse
 
 ✅ Your **Node.js backend** is deployed on Railway at:
 
-<pre>
+``` bash
 https://honest-analysis-production.up.railway.app
-</pre>
+```
 No local server run is needed, backend is globally accessible.
 
 ## 5️⃣ Testing the Pipeline
@@ -192,6 +206,39 @@ engine.setProperty('volume', 0.8)
 
 ---
 
+## 7️⃣ Web Frontend
+
+✅ Your **Vite + React Frontend** is deployed on Vercel at:
+```bash
+https://echo-mind-nu.vercel.app/
+``` 
+
+### Key Frontend Features:
+
+✅ Front fully deployed on Vercel.
+
+✅ View, add, and delete **Tasks**, **Reminders**, **Notes**
+
+✅ Tasks, Reminders and Notes can be added manually.
+
+✅ **Voice assistant** can add tasks, reminders and notes using speech recognition.
+
+✅ On **Dashboard** there's a total count for active tasks, active reminders and total notes.
+
+✅ In tasks list you can tick if the task is completed and it'll be removed from the total count of active tasks.
+
+✅ **Proper date + time picker**, with local time handling in **Reminders**.
+
+✅ After the reminder time is over, that reminder becomes **strikethrough** so we can easily differentiate between active and non-active reminders. 
+
+✅ Time is shown in **Pakistan Standard Time (PKT)**
+
+✅ Fully integrated with your deployed backend on Railway
+
+✅ Minimal clean design with React hooks and modular components
+
+---
+
 ## 🩺 Troubleshooting
 
 ✅ **FastAPI server not reachable:** Ensure Railway deployment is live and using the `/parse` endpoint.
@@ -216,7 +263,9 @@ engine.setProperty('volume', 0.8)
 
 ✅ Clean microservices architecture (FastAPI + Node.js + Neon).
 
-✅ Fully deployed on Railway for global access
+✅ Backend fully deployed on Railway for global access.
+
+✅ Frontend fully deployed on Vercel and connected to backend.
 
 ✅ Extendable for frontend apps, Discord bots, or mobile clients.
 
