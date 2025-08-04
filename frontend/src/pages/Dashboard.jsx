@@ -71,7 +71,7 @@ const DashboardSummary = () => {
           const currentMinute = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
           
           // Only consider it past if the reminder minute is strictly before the current minute
-          // If reminder minute >= current minute, it's still active
+          // If reminder minute > current minute, it's still active reminder 
           const isActive = reminderMinute > currentMinute;
           
           console.log('Reminder:', dtString, 'Parsed as:', reminderDate, 'Current time:', now, 'Is active?', isActive);
