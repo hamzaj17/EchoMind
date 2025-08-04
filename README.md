@@ -70,7 +70,9 @@ This guide ensures **anyone can clone, run, and test EchoMind on any machine rel
 
 ✅ For FastAPI Insight Engine (fastapi, uvicorn)
 
-✅ For SpeechRecognition (libraries: speech_recognition, requests)
+✅ For SpeechRecognition (libraries: speech_recognition, requests) [optional: for speech_recognition only using backend]
+
+✅ For frontend: React, react-icons, Vite, axios, React Router. 
 
 ---
 
@@ -89,8 +91,8 @@ cd EchoMind
 2. Create a **new project** and note down the **DATABASE\_URL** connection string.
 3. Ensure the database has these tables:
 
-   * **task** (id, description, created\_at)
-   * **reminder** (id, content, created\_at)
+   * **task** (id, description, created\_at, completed)
+   * **reminder** (id, content, created\_at, datetime)
    * **note** (id, content, created\_at)
 4. Save your `DATABASE_URL` for the backend `.env` file.
 
