@@ -21,7 +21,7 @@ EchoMind is a full-stack AI-powered voice assistant web application that allows 
 ├── 📁 frontend/               # React Vite-based Web UI
 │
 🗋 README.md                   # GitHub documentation
-🗋 document.md                # Project technical documentation (this file)
+🗋 doc.md                # Project technical documentation (this file)
 </pre>
 ---
 
