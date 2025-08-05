@@ -66,7 +66,7 @@ This guide ensures **anyone can clone, run, and test EchoMind on any machine rel
 
 ✅ Prisma Client (used in your backend code to interact with the database)
 
-✅ For FastAPI Insight Engine (fastapi, uvicorn)
+✅ For FastAPI Insight Engine (fastapi, uvicorn) (optional)
 
 ✅ For SpeechRecognition (libraries: speech_recognition, requests, pyttsx3) [optional: for speech_recognition only using backend]
 
