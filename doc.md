@@ -2,7 +2,7 @@
 
 <h2>Project Overview</h2>
 
-EchoMind is a full-stack AI-powered voice assistant web application that allows users to manage tasks, reminders, and notes through voice commands. It includes:
+EchoMind is a AI-powered voice assistant web application that allows users to manage tasks, reminders, and notes through voice commands. It includes:
 
     🗃️ Brain Backend (Node.js + Prisma + PostgreSQL)
 
