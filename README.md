@@ -289,5 +289,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
  [GitHub] (https://github.com/hamzaj17)
 
 ---
+For more information about this project, see the [documentation](./doc.md).
 
 ✨ *Thank you for using EchoMind! Enhance your productivity using structured, AI-powered task and reminder management with clean, modular architecture ready for your next projects.*
