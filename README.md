@@ -149,7 +149,7 @@ curl -X POST https://honest-analysis-production.up.railway.app/api/command \
 
 ---
 
-## 6️⃣ Run CLI Voice Assistant
+## 6️⃣ Run CLI Voice Assistant (Optional)
 
 Your voice_assistant.py will use your deployed backend:
 <pre>
