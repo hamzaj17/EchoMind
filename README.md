@@ -1,10 +1,8 @@
-# 🚀 EchoMind: CLI Voice-Assistant, AI Insight Engine + Smart Task, Reminder, Note Manager + Frontend Web UI
+# 🚀 EchoMind: Voice Assistant that allows users to manage tasks, reminders and notes through voice commands with a Frontend Web UI
 
 EchoMind is a **voice-driven, AI-enhanced productivity assistant** that:
 
 ✅ Voice/text command recognition (voice command recognition).
-
-✅ Parses spoken/text commands using an **AI Insight Engine (FastAPI)**.
 
 ✅ Extracts structured intents/entities.
 
