@@ -124,6 +124,9 @@ https://echomind-production-48ea.up.railway.app/parse
   ```
 * Deploy and note your `/parse` endpoint URL.
 
+**Note:** The **ai-insight-engine** was previously deployed on Railway but is currently offline as the free trial has ended. 
+  
+
 ---
 
 ## 4️⃣ Deploy Node.js Backend on Railway
@@ -134,6 +137,8 @@ https://echomind-production-48ea.up.railway.app/parse
 https://honest-analysis-production.up.railway.app
 ```
 No local server run is needed, backend is globally accessible.
+
+**Note:** The **backend** was previously deployed on Railway but is currently offline as the free trial has ended. 
 
 ## 5️⃣ Testing the Pipeline
 
